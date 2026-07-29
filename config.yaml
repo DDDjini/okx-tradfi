@@ -3,18 +3,25 @@
 #  基于 2026-07-28 网格搜索(1.0-3.0)+理论对比(缠论/波浪)+止损截断 综合优化
 # ============================================================
 
-# --- 监控交易对（OKX 永续合约 USDT 计价）---
+# --- 监控交易对（17个股票代币，数据源: Yahoo Finance 2年+）---
 symbols:
-  - SPCX/USDT:USDT
-  - CL/USDT:USDT
-  - OPENAI/USDT:USDT
+  - AAPL/USDT:USDT
+  - MSFT/USDT:USDT
+  - GOOGL/USDT:USDT
+  - AMZN/USDT:USDT
+  - TSLA/USDT:USDT
+  - NVDA/USDT:USDT
   - INTC/USDT:USDT
+  - MU/USDT:USDT
+  - TSM/USDT:USDT
+  - SPCX/USDT:USDT
   - SAMSUNG/USDT:USDT
   - SKHYNIX/USDT:USDT
-  - NVDA/USDT:USDT
   - XAU/USDT:USDT
+  - CL/USDT:USDT
   - XAG/USDT:USDT
-  - GOOGL/USDT:USDT
+  - SNDK/USDT:USDT
+  - OPENAI/USDT:USDT
 
 # --- 分型参数（RR 经 630 组网格搜索优化）---
 # RR最优区间: 1.7-2.0（平衡胜率和收益）
