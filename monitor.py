@@ -33,6 +33,29 @@ from core.risk import RiskController
 from core.strategy import Side, build_signal
 from notify.feishu import FeishuNotifier
 
+import json
+
+PUSHED_CACHE_FILE = PROJECT_ROOT / "data" / "pushed_cache.json"
+
+
+def load_pushed_cache() -> set:
+    """从磁盘加载已推送记录。"""
+    if PUSHED_CACHE_FILE.exists():
+        try:
+            with open(PUSHED_CACHE_FILE, "r") as f:
+                data = json.load(f)
+            return set(data)
+        except Exception:
+            pass
+    return set()
+
+
+def save_pushed_cache(cache: set) -> None:
+    """保存已推送记录到磁盘。"""
+    PUSHED_CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with open(PUSHED_CACHE_FILE, "w") as f:
+        json.dump(list(cache), f)
+
 
 def setup_logging(level: str, log_file: str) -> None:
     log_path = PROJECT_ROOT / log_file
@@ -244,12 +267,15 @@ def main():
     if not notifier.enabled:
         logger.warning("飞书 Webhook 未配置！请在 .env 中设置 FEISHU_WEBHOOK")
 
-    pushed_cache: set[str] = set()
+    # 从磁盘恢复已推送记录（跨轮次去重）
+    pushed_cache: set[str] = load_pushed_cache()
+    logger.info(f"已加载 {len(pushed_cache)} 条历史推送记录")
 
     # 启动时全量扫一轮
     logger.info("启动扫描: 全量检查所有周期...")
-    conflict_cache: dict = {}  # 冲突缓存（key=symbol|tf, value=last_conflict_idx）
+    conflict_cache: dict = {}
     count = scan_all(valid_symbols, config.timeframes, config, risk_ctrl, notifier, pushed_cache, conflict_cache, logger)
+    save_pushed_cache(pushed_cache)  # 持久化去重记录
     logger.info("启动扫描完成, 推送 %d 信号", count)
 
     if args.once:
@@ -294,6 +320,7 @@ def main():
 
             if count > 0:
                 logger.info("本轮推送 %d 信号", count)
+                save_pushed_cache(pushed_cache)
 
             risk_ctrl.cleanup()
 
