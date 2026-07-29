@@ -232,12 +232,11 @@ def main():
     logger.info(f"智能轮询: {'ON' if config.smart_polling else 'OFF'}")
     logger.info("=" * 50)
 
-    valid_symbols, invalid_symbols = validate_symbols(config.symbols, config.proxy_url)
+    # Yahoo Finance 数据无需预校验，所有 config 里的 symbol 都参与
+    valid_symbols = config.symbols
     if not valid_symbols:
-        logger.error("无有效交易对，退出")
+        logger.error("config.yaml 中无交易对，退出")
         sys.exit(1)
-    if invalid_symbols:
-        logger.warning("已剔除: %s", ", ".join(invalid_symbols))
 
     risk_ctrl = RiskController(config.risk)
     notifier = FeishuNotifier(config.feishu_webhook, config.feishu_secret)
@@ -249,7 +248,8 @@ def main():
 
     # 启动时全量扫一轮
     logger.info("启动扫描: 全量检查所有周期...")
-    count = scan_all(valid_symbols, config.timeframes, config, risk_ctrl, notifier, pushed_cache, logger)
+    conflict_cache: dict = {}  # 冲突缓存（key=symbol|tf, value=last_conflict_idx）
+    count = scan_all(valid_symbols, config.timeframes, config, risk_ctrl, notifier, pushed_cache, conflict_cache, logger)
     logger.info("启动扫描完成, 推送 %d 信号", count)
 
     if args.once:
@@ -290,7 +290,7 @@ def main():
 
             # 只对触发的周期扫描（减少 API 调用）
             scan_tfs = {k: v for k, v in config.timeframes.items() if k in trigger_tfs}
-            count = scan_all(valid_symbols, scan_tfs, config, risk_ctrl, notifier, pushed_cache, logger)
+            count = scan_all(valid_symbols, scan_tfs, config, risk_ctrl, notifier, pushed_cache, conflict_cache, logger)
 
             if count > 0:
                 logger.info("本轮推送 %d 信号", count)
