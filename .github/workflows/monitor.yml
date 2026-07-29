@@ -37,17 +37,18 @@ jobs:
         run: |
           pip install -q -r requirements.txt
 
+      - name: Cache K-line data
+        uses: actions/cache@v4
+        with:
+          path: data/
+          key: yahoo-kline-v2-${{ github.ref_name }}
+
       - name: Run monitor scan
         env:
           FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
         run: |
-          # 注入飞书 webhook（通过 GitHub Secrets）
           echo "FEISHU_WEBHOOK=${FEISHU_WEBHOOK}" > .env
           echo "FEISHU_SECRET=" >> .env
           echo "PROXY_URL=" >> .env
-
-          # 强制清空旧缓存（列结构可能变化，避免旧 .csv 格式冲突）
-          rm -rf data/ 2>/dev/null || true
-
-          # 跑一轮扫描（出错打印完整堆栈）
+          mkdir -p data
           python -u monitor.py --once 2>&1
