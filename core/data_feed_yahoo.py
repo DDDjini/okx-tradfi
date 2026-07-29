@@ -18,6 +18,7 @@ core/data_feed_yahoo.py — Yahoo Finance 数据源（替代 OKX）
 from __future__ import annotations
 
 import logging
+import time
 from pathlib import Path
 from typing import Optional
 
@@ -34,7 +35,7 @@ DATA_DIR = PROJECT_ROOT / "data"
 SYMBOL_MAP: dict[str, str] = {
     "SNDK/USDT:USDT": "SNDK",          # SanDisk (被WD收购, 现在用WDC近似)
     "MU/USDT:USDT": "MU",              # Micron
-    "SPCX/USDT:USDT": "SPCX",          # SPAC ETF
+    "SPCX/USDT:USDT": "SPY",           # SPCX 已退市 → 用 SPY 替代
     "OPENAI/USDT:USDT": "BOTZ",        # OpenAI未上市→AI机器人ETF替代
     "SKHYNIX/USDT:USDT": "000660.KS",  # SK Hynix 韩国
     "XAU/USDT:USDT": "GLD",            # 黄金→SPDR Gold ETF
@@ -116,73 +117,86 @@ def fetch_yahoo_ohlcv(
     else:
         period_str = f"{min(actual_days, 3650)}d"
 
-    try:
-        logger.debug("拉取 %s (%s) %s %s", symbol, ticker, interval, period_str)
-        stock = yf.Ticker(ticker)
-        df = stock.history(period=period_str, interval=interval)
-
-        if df is None or len(df) == 0:
-            logger.warning("Yahoo 返回空数据: %s (%s)", symbol, ticker)
+    # 重试机制：遇 429/限流自动退避
+    max_retries = 3
+    df = None
+    for attempt in range(max_retries):
+        try:
+            stock = yf.Ticker(ticker)
+            df = stock.history(period=period_str, interval=interval)
+            break  # 成功就跳出
+        except Exception as e:
+            err = str(e).lower()
+            if "rate" in err or "too many" in err or "429" in err:
+                if attempt < max_retries - 1:
+                    wait = (attempt + 1) * 5  # 5s, 10s, 15s
+                    logger.warning("Yahoo 限流（%s）%d 秒后重试...", symbol, wait)
+                    time.sleep(wait)
+                    continue
+            logger.error("Yahoo 数据拉取失败 %s (%s): %s", symbol, ticker, e)
             return pd.DataFrame()
 
-        df = df.reset_index()
-        # 标准化列名
-        col_map = {}
-        for c in df.columns:
-            cl = c.lower()
-            if "date" in cl or "time" in cl or "datetime" in cl:
-                col_map[c] = "datetime"
-            elif cl in ("open",):
-                col_map[c] = "open"
-            elif cl in ("high",):
-                col_map[c] = "high"
-            elif cl in ("low",):
-                col_map[c] = "low"
-            elif cl in ("close",):
-                col_map[c] = "close"
-            elif cl in ("volume",):
-                col_map[c] = "volume"
-
-        df = df.rename(columns=col_map)
-
-        # 确保有所有需要的列
-        for required in ["datetime", "open", "high", "low", "close", "volume"]:
-            if required not in df.columns:
-                if required == "volume":
-                    df["volume"] = 0
-                else:
-                    logger.error("缺少列: %s in %s", required, ticker)
-                    return pd.DataFrame()
-
-        df["datetime"] = pd.to_datetime(df["datetime"], utc=True)
-        # yfinance 返回的 datetime 可能不带时区
-        if df["datetime"].dt.tz is None:
-            df["datetime"] = df["datetime"].dt.tz_localize("UTC")
-
-        df["timestamp"] = df["datetime"].astype("int64") // 10**6
-        df = df.sort_values("datetime").reset_index(drop=True)
-
-        # 4h 周期：从 1h 数据聚合成 4h
-        if timeframe == "4h" and interval == "1h":
-            df = _aggregate_to_4h(df)
-
-        # 应用价格缩放（如 KRW → USD）
-        scale = PRICE_SCALE.get(ticker, 1.0)
-        if scale != 1.0:
-            for col in ("open", "high", "low", "close"):
-                df[col] = df[col] * scale
-            logger.debug("%s 价格缩放 × %.6f (KRW→USD)", symbol, scale)
-
-        logger.info("Yahoo %s (%s) %s: %d 根K线, %s ~ %s",
-            symbol, ticker, timeframe, len(df),
-            df["datetime"].iloc[0].strftime("%Y-%m-%d"),
-            df["datetime"].iloc[-1].strftime("%Y-%m-%d"))
-
-        return df
-
-    except Exception as e:
-        logger.error("Yahoo 数据拉取失败 %s (%s): %s", symbol, ticker, e)
+    if df is None or len(df) == 0:
+        logger.warning("Yahoo 返回空数据: %s (%s)", symbol, ticker)
         return pd.DataFrame()
+
+    # 请求间隔，避免连续触发限流
+    time.sleep(0.5)
+
+    df = df.reset_index()
+    # 标准化列名
+    col_map = {}
+    for c in df.columns:
+        cl = c.lower()
+        if "date" in cl or "time" in cl or "datetime" in cl:
+            col_map[c] = "datetime"
+        elif cl in ("open",):
+            col_map[c] = "open"
+        elif cl in ("high",):
+            col_map[c] = "high"
+        elif cl in ("low",):
+            col_map[c] = "low"
+        elif cl in ("close",):
+            col_map[c] = "close"
+        elif cl in ("volume",):
+            col_map[c] = "volume"
+
+    df = df.rename(columns=col_map)
+
+    # 确保有所有需要的列
+    for required in ["datetime", "open", "high", "low", "close", "volume"]:
+        if required not in df.columns:
+            if required == "volume":
+                df["volume"] = 0
+            else:
+                logger.error("缺少列: %s in %s", required, ticker)
+                return pd.DataFrame()
+
+    df["datetime"] = pd.to_datetime(df["datetime"], utc=True)
+    # yfinance 返回的 datetime 可能不带时区
+    if df["datetime"].dt.tz is None:
+        df["datetime"] = df["datetime"].dt.tz_localize("UTC")
+
+    df["timestamp"] = df["datetime"].astype("int64") // 10**6
+    df = df.sort_values("datetime").reset_index(drop=True)
+
+    # 4h 周期：从 1h 数据聚合成 4h
+    if timeframe == "4h" and interval == "1h":
+        df = _aggregate_to_4h(df)
+
+    # 应用价格缩放（如 KRW → USD）
+    scale = PRICE_SCALE.get(ticker, 1.0)
+    if scale != 1.0:
+        for col in ("open", "high", "low", "close"):
+            df[col] = df[col] * scale
+        logger.debug("%s 价格缩放 × %.6f (KRW→USD)", symbol, scale)
+
+    logger.info("Yahoo %s (%s) %s: %d 根K线, %s ~ %s",
+        symbol, ticker, timeframe, len(df),
+        df["datetime"].iloc[0].strftime("%Y-%m-%d"),
+        df["datetime"].iloc[-1].strftime("%Y-%m-%d"))
+
+    return df
 
 
 def _aggregate_to_4h(df: pd.DataFrame) -> pd.DataFrame:
@@ -219,14 +233,15 @@ def fetch_yahoo_cached(
     safe_name = f"yahoo_{ticker}_{timeframe}"
     cache_path = DATA_DIR / f"{safe_name}.csv"
 
-    # 读缓存
+    # 读缓存（按文件修改时间算 6 小时有效）
     if use_cache and cache_path.exists():
         try:
-            cached = pd.read_csv(cache_path, parse_dates=["datetime"])
-            cached["datetime"] = pd.to_datetime(cached["datetime"], utc=True)
-            cache_age = (pd.Timestamp.now(tz="UTC") - cached["datetime"].max()).days
-            if cache_age < 1:  # 24h 内缓存有效
-                logger.debug("使用缓存: %s (%s) %d 根", symbol, ticker, len(cached))
+            file_age_hours = (time.time() - cache_path.stat().st_mtime) / 3600
+            if file_age_hours < 6:
+                cached = pd.read_csv(cache_path, parse_dates=["datetime"])
+                cached["datetime"] = pd.to_datetime(cached["datetime"], utc=True)
+                logger.debug("使用缓存: %s (%s) %d 根 [%.1fh 前]",
+                    symbol, ticker, len(cached), file_age_hours)
                 return cached
         except Exception:
             pass
