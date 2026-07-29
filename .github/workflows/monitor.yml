@@ -35,23 +35,19 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pandas numpy pyyaml python-dotenv requests urllib3 yfinance
-
-      - name: Cache K-line data
-        uses: actions/cache@v4
-        with:
-          path: data/
-          key: kline-data-v1-${{ github.ref_name }}-${{ hashFiles('config.yaml') }}
-          restore-keys: kline-data-v1-
+          pip install -q -r requirements.txt
 
       - name: Run monitor scan
         env:
           FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
         run: |
-          # 用 GitHub Secrets 注入飞书 webhook
+          # 注入飞书 webhook（通过 GitHub Secrets）
           echo "FEISHU_WEBHOOK=${FEISHU_WEBHOOK}" > .env
           echo "FEISHU_SECRET=" >> .env
           echo "PROXY_URL=" >> .env
-          
-          # 跑一轮扫描
-          python monitor.py --once
+
+          # 强制清空旧缓存（列结构可能变化，避免旧 .csv 格式冲突）
+          rm -rf data/ 2>/dev/null || true
+
+          # 跑一轮扫描（出错打印完整堆栈）
+          python -u monitor.py --once 2>&1
