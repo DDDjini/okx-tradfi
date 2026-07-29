@@ -56,6 +56,13 @@ FALLBACK_MAP = {
     "SNDK": "WDC",   # SanDisk被WD收购，用WDC近似
 }
 
+# 价格缩放因子：把原始货币价格换算成"USDT 计价"
+# 韩国股票 yahoo 返回的是 KRW（韩元），需要 ÷ 1300 转 USD
+PRICE_SCALE: dict[str, float] = {
+    "005930.KS": 1 / 1300.0,  # SAMSUNG KOSPI → USD
+    "000660.KS": 1 / 1300.0,  # SKHYNIX KOSPI → USD
+}
+
 # 周期映射（yfinance 支持的周期）
 INTERVAL_MAP = {
     "30m": "30m",
@@ -158,6 +165,13 @@ def fetch_yahoo_ohlcv(
         # 4h 周期：从 1h 数据聚合成 4h
         if timeframe == "4h" and interval == "1h":
             df = _aggregate_to_4h(df)
+
+        # 应用价格缩放（如 KRW → USD）
+        scale = PRICE_SCALE.get(ticker, 1.0)
+        if scale != 1.0:
+            for col in ("open", "high", "low", "close"):
+                df[col] = df[col] * scale
+            logger.debug("%s 价格缩放 × %.6f (KRW→USD)", symbol, scale)
 
         logger.info("Yahoo %s (%s) %s: %d 根K线, %s ~ %s",
             symbol, ticker, timeframe, len(df),
