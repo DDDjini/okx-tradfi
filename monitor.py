@@ -26,7 +26,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from core.config import PROJECT_ROOT, load_config
-from core.data_feed import fetch_ohlcv_cached, validate_symbols
+from core.data_feed_yahoo import fetch_yahoo_cached
 from core.fractal import add_fractals, last_confirmed_fractal
 from core.indicators import add_all_indicators, filter_signal
 from core.risk import RiskController
@@ -118,21 +118,24 @@ def scan_all(
     risk_ctrl: RiskController,
     notifier: FeishuNotifier,
     pushed_cache: set,
+    conflict_cache: dict,
     logger: logging.Logger,
 ) -> int:
-    """扫描所有交易对×周期，返回推送信号数。"""
+    """扫描所有交易对×周期，返回推送信号数。含冲突抑制。"""
     pushed_count = 0
 
     for symbol in symbols:
         for tf_str, tf_cfg in timeframes.items():
             try:
-                df = fetch_ohlcv_cached(
+                period = 730 if tf_str in ("1d", "4h", "1h") else 60
+                df = fetch_yahoo_cached(
                     symbol=symbol, timeframe=tf_str,
-                    limit=config.exchange_limit, proxy_url=config.proxy_url, use_cache=True,
+                    period_days=period,
                 )
                 if df is None or len(df) < tf_cfg.left + tf_cfg.right + 3:
                     continue
 
+                df = add_all_indicators(df)
                 df = add_fractals(df, tf_cfg.left, tf_cfg.right)
                 fractal = last_confirmed_fractal(df, tf_cfg.right)
                 if fractal is None:
@@ -144,15 +147,43 @@ def scan_all(
 
                 side = Side.LONG if fractal["type"] == "low" else Side.SHORT
 
-                # PSY + EMA 过滤器
-                df = add_all_indicators(df)
+                # 冲突抑制：同级别 5 根 K 线内出现反向信号 = 震荡
+                opposite = "high" if fractal["type"] == "low" else "low"
+                conflict_window = 5 if tf_str != "1d" else 3
+                for j in range(max(0, fractal['idx'] - conflict_window),
+                               min(len(df), fractal['idx'] + conflict_window)):
+                    if j - tf_cfg.right >= 0 and df.loc[j - tf_cfg.right, f"fractal_{opposite}"]:
+                        logger.debug("冲突抑制: %s %s idx=%d", symbol, tf_str, fractal['idx'])
+                        pushed_cache.add(cache_key)
+                        # 把反向信号也抑制
+                        opp_key = f"{symbol}|{tf_str}|{j - tf_cfg.right}"
+                        pushed_cache.add(opp_key)
+                        break
+                else:
+                    # 没被 break 才继续
+                    pass
+                if cache_key in pushed_cache:
+                    continue
+
+                # PSY + EMA 过滤
                 if fractal["idx"] >= 34:
                     passed, reason = filter_signal(df, fractal["idx"], side)
                     if not passed:
                         logger.debug("过滤: %s %s %s", symbol, tf_str, reason)
                         pushed_cache.add(cache_key)
                         continue
-                    logger.debug("指标确认: %s %s %s", symbol, tf_str, reason)
+
+                # 1d ATR 异动过滤
+                if tf_str == "1d" and fractal["idx"] >= 15:
+                    highs = df["high"].iloc[max(0,fractal['idx']-14):fractal['idx']]
+                    lows = df["low"].iloc[max(0,fractal['idx']-14):fractal['idx']]
+                    tr = (highs.values - lows.values).mean()
+                    price = df["close"].iloc[fractal['idx']]
+                    atr_pct = tr / price if price > 0 else 0
+                    if atr_pct < 0.015:
+                        logger.debug("ATR异动: %s %s ATR=%.1f%% 太小", symbol, tf_str, atr_pct*100)
+                        pushed_cache.add(cache_key)
+                        continue
 
                 entry_price = float(df.iloc[-1]["close"])
                 signal_time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -162,6 +193,7 @@ def scan_all(
                     entry_price=entry_price, pivot_price=fractal["price"],
                     rr=tf_cfg.rr, sl_buffer=tf_cfg.sl_buffer,
                     signal_time=signal_time, risk=config.risk,
+                    rr1=1.0, rr2=tf_cfg.rr,
                 )
 
                 allowed, reason = risk_ctrl.allow(signal)
