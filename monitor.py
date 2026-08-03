@@ -26,7 +26,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from core.config import PROJECT_ROOT, load_config
-from core.data_feed_yahoo import fetch_yahoo_cached
+from core.data_feed import fetch_ohlcv_cached, validate_symbols
 from core.fractal import add_fractals, last_confirmed_fractal
 from core.indicators import add_all_indicators, filter_signal
 from core.risk import RiskController
@@ -150,10 +150,9 @@ def scan_all(
     for symbol in symbols:
         for tf_str, tf_cfg in timeframes.items():
             try:
-                period = 730 if tf_str in ("1d", "4h", "1h") else 60
-                df = fetch_yahoo_cached(
+                df = fetch_ohlcv_cached(
                     symbol=symbol, timeframe=tf_str,
-                    period_days=period,
+                    limit=config.exchange_limit, proxy_url=config.proxy_url, use_cache=True,
                 )
                 if df is None or len(df) < tf_cfg.left + tf_cfg.right + 3:
                     continue
@@ -255,11 +254,13 @@ def main():
     logger.info(f"智能轮询: {'ON' if config.smart_polling else 'OFF'}")
     logger.info("=" * 50)
 
-    # Yahoo Finance 数据无需预校验，所有 config 里的 symbol 都参与
-    valid_symbols = config.symbols
+    # OKX 数据校验：剔除不在 OKX 上的交易对
+    valid_symbols, invalid_symbols = validate_symbols(config.symbols, config.proxy_url)
     if not valid_symbols:
-        logger.error("config.yaml 中无交易对，退出")
+        logger.error("无有效交易对，退出")
         sys.exit(1)
+    if invalid_symbols:
+        logger.warning("已剔除: %s", ", ".join(invalid_symbols))
 
     risk_ctrl = RiskController(config.risk)
     notifier = FeishuNotifier(config.feishu_webhook, config.feishu_secret)
