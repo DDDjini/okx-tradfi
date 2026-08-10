@@ -79,6 +79,8 @@ class FeishuNotifier:
         direction_emoji = signal.side_emoji
 
         title = f"{direction_emoji} {'做多' if is_long else '做空'}信号 | {signal.symbol} | {signal.timeframe}"
+        if is_star_signal(signal.symbol, signal.timeframe):
+            title = f"⭐ {title}"
 
         card = {
             "msg_type": "interactive",
