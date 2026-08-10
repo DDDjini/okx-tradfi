@@ -43,11 +43,6 @@ timeframes:
     right: 3
     rr: 1.8
     sl_buffer: 0.003
-  "1d":
-    left: 4
-    right: 4
-    rr: 2.0
-    sl_buffer: 0.004
 
 # --- 过滤器选择 ---
 # PSY+EMA：最佳（38.8%胜率, 3.9%收益, 12/28盈利）
