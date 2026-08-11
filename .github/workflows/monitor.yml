@@ -38,7 +38,20 @@ jobs:
           restore-keys: |
             okx-data-v4-
 
-      - name: Run monitor scan
+          - name: Diagnose OKX API
+        run: |
+          python -c "
+          import requests,time
+          s=requests.Session(); s.verify=False
+          import urllib3; urllib3.disable_warnings()
+          try:
+            r=s.get('https://www.okx.com/api/v5/public/time',timeout=15)
+            print(f'OKX API: {r.status_code} -> {r.json()}')
+          except Exception as e:
+            print(f'OKX FAIL: {e}')
+          "
+
+      - name: Run monitor scan (fresh)
         env:
           FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
         run: |
@@ -46,7 +59,8 @@ jobs:
           echo "FEISHU_SECRET=" >> .env
           echo "PROXY_URL=" >> .env
           mkdir -p data
-          [ ! -f data/pushed_cache.json ] && echo '[]' > data/pushed_cache.json
+          # 每轮强制清 pushed_cache → 看真实信号量
+          echo '[]' > data/pushed_cache.json
           python -u monitor.py --once 2>&1
 
       - name: Save data cache
