@@ -1,6 +1,5 @@
 name: OKX TradFi Monitor v2
 
-# 每 10 分钟跑一轮
 on:
   schedule:
     - cron: "*/10 * * * *"
@@ -29,29 +28,24 @@ jobs:
       - name: Install dependencies
         run: pip install -q -r requirements.txt
 
+      - name: Diagnose OKX API
+        run: |
+          python -c "import requests,urllib3;urllib3.disable_warnings();
+          s=requests.Session();s.verify=False
+          try:
+            r=s.get('https://www.okx.com/api/v5/public/time',timeout=15)
+            print('OKX API:',r.status_code,r.json())
+          except Exception as e:
+            print('OKX FAIL:',e)"
+
       - name: Restore data cache
-        id: cache-restore
         uses: actions/cache/restore@v4
         with:
           path: data/
           key: okx-data-v4-${{ github.run_id }}
-          restore-keys: |
-            okx-data-v4-
+          restore-keys: okx-data-v4-
 
-          - name: Diagnose OKX API
-        run: |
-          python -c "
-          import requests,time
-          s=requests.Session(); s.verify=False
-          import urllib3; urllib3.disable_warnings()
-          try:
-            r=s.get('https://www.okx.com/api/v5/public/time',timeout=15)
-            print(f'OKX API: {r.status_code} -> {r.json()}')
-          except Exception as e:
-            print(f'OKX FAIL: {e}')
-          "
-
-      - name: Run monitor scan (fresh)
+      - name: Run monitor scan
         env:
           FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
         run: |
@@ -59,7 +53,6 @@ jobs:
           echo "FEISHU_SECRET=" >> .env
           echo "PROXY_URL=" >> .env
           mkdir -p data
-          # 每轮强制清 pushed_cache → 看真实信号量
           echo '[]' > data/pushed_cache.json
           python -u monitor.py --once 2>&1
 
