@@ -1,18 +1,15 @@
 name: OKX TradFi Monitor
 
 # 每 10 分钟跑一轮
-# 每天 144 次 × 每次 ~30 秒 = 72 分钟/天 = 2160 分钟/月（公开仓库免费无限）
-
 on:
   schedule:
     - cron: "*/10 * * * *"
-  # 手动触发（调试验证用）
   workflow_dispatch:
 
 jobs:
   scan:
     runs-on: ubuntu-latest
-    timeout-minutes: 8  # 单次最多 8 分钟，超时自动杀
+    timeout-minutes: 8
 
     steps:
       - name: Checkout
@@ -30,14 +27,16 @@ jobs:
           key: pip-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
 
       - name: Install dependencies
-        run: |
-          pip install -q -r requirements.txt
+        run: pip install -q -r requirements.txt
 
-      - name: Cache data (K线 + 推送记录)
-        uses: actions/cache@v4
+      - name: Restore data cache
+        id: cache-restore
+        uses: actions/cache/restore@v4
         with:
           path: data/
-          key: okx-data-v3-${{ github.ref_name }}
+          key: okx-data-v4-${{ github.run_id }}
+          restore-keys: |
+            okx-data-v4-
 
       - name: Run monitor scan
         env:
@@ -49,3 +48,10 @@ jobs:
           mkdir -p data
           [ ! -f data/pushed_cache.json ] && echo '[]' > data/pushed_cache.json
           python -u monitor.py --once 2>&1
+
+      - name: Save data cache
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: data/
+          key: okx-data-v4-${{ github.run_id }}
