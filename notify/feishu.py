@@ -22,21 +22,19 @@ from core.strategy import TradeSignal
 
 logger = logging.getLogger(__name__)
 
-# 信号胜率 >= 70% 的组合 → 飞书卡片加 ⭐
+# 信号胜率 >= 70% 且长历史（≥7笔）验证通过 → 飞书卡片加 ⭐
+# 基于 2026-08-17 长历史回测重新评定
 STAR_SIGNALS: dict[str, list[str]] = {
-    "AAPL/USDT:USDT": ["30m"],
-    "AMZN/USDT:USDT": ["30m"],
-    "CL/USDT:USDT": ["30m", "1h"],
-    "GOOGL/USDT:USDT": ["30m", "1h"],
-    "MSFT/USDT:USDT": ["30m"],
-    "MU/USDT:USDT": ["30m", "4h"],
-    "NVDA/USDT:USDT": ["30m", "1h"],
-    "SAMSUNG/USDT:USDT": ["30m", "4h"],
-    "SKHYNIX/USDT:USDT": ["1h", "4h"],
+    "AMZN/USDT:USDT": ["1h", "4h"],
+    "CL/USDT:USDT": ["1h"],
+    "GOOGL/USDT:USDT": ["1h", "4h"],
+    "INTC/USDT:USDT": ["4h"],
+    "MU/USDT:USDT": ["1h", "4h"],
+    "NVDA/USDT:USDT": ["1h"],
+    "OPENAI/USDT:USDT": ["1h"],
     "SNDK/USDT:USDT": ["1h"],
-    "TSLA/USDT:USDT": ["30m", "1h", "4h"],
-    "TSM/USDT:USDT": ["4h"],
-    "XAU/USDT:USDT": ["30m", "4h"],
+    "TSLA/USDT:USDT": ["1h"],
+    "XAU/USDT:USDT": ["1h", "4h"],
 }
 
 
