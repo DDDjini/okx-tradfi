@@ -12,7 +12,8 @@ from datetime import datetime, timezone, timedelta
 import pandas as pd
 import requests
 from engine import generate, iso
-from market_data import CACHE, COLS
+from feishu_cards import signal_card, summary_card
+COLS = ["open", "high", "low", "close", "volume"]
 
 ROOT = Path(__file__).resolve().parent
 
@@ -68,20 +69,19 @@ def run(send=False, only=None):
                 sl,tp1,tp2=signal.levels
                 key='okx-v1/'+signal.id+'/'+str(signal.ready)
                 row={'key':key,'instrument':instrument,'ready':iso(signal.ready),'side':signal.side,
-                     'low':signal.zone[0],'high':signal.zone[1],'mid':signal.mid,'sl':sl,'tp1':tp1,'tp2':tp2}
+                     'low':signal.zone[0],'high':signal.zone[1],'mid':signal.mid,'sl':sl,'tp1':tp1,'tp2':tp2,'reference':signal.reference}
                 report['signals'].append(row)
                 if key not in state:
                     report['new_signals'].append(row)
                 if send and key not in state:
-                    notify(f"S-28 OKX {instrument} {'多' if signal.side>0 else '空'}\n确认 {iso(signal.ready)} UTC\n区间 {signal.zone[0]:.4f}–{signal.zone[1]:.4f}\nMID {signal.mid:.4f}\nSL {sl:.4f} · TP1 {tp1:.4f} · TP2 {tp2:.4f}\n{key}")
+                    notify(signal_card(row,asset))
                     state[key]={'sent_at':now.isoformat()}
                     save(state_file,state)
         except Exception as exc:
             report['errors'].append({'symbol':symbol,'error_type':type(exc).__name__,'reason':str(exc) if isinstance(exc,ValueError) else 'market or notification request failed'})
     save(ROOT/'scan_output.json',report)
     if send:
-        status='本轮没有新信号触发' if not report['new_signals'] and not report['errors'] else '扫描存在异常' if report['errors'] else f"本轮新信号 {len(report['new_signals'])} 条（已通知信号去重）"
-        notify(f"S-28 欧意扫描完成\n{status}\n正常标的 {len(report['health'])} · 异常 {len(report['errors'])}\n未上架 {', '.join(report['unsupported']) or '无'}\n时间 {now.astimezone(timezone(timedelta(hours=8))).isoformat()}"+('\n异常 '+json.dumps(report['errors'],ensure_ascii=False) if report['errors'] else ''))
+        notify(summary_card(report))
     print(json.dumps({'healthy':len(report['health']),'signals':len(report['signals']),'errors':report['errors'],'unsupported':report['unsupported']},ensure_ascii=False))
     return int(bool(report['errors']))
 
@@ -115,11 +115,11 @@ def candles(instrument,bar,seconds,now):
     return Bars.from_frame(pd.DataFrame([rows[t] for t in sorted(rows)],columns=['t',*COLS]),seconds)
 
 
-def notify(text):
+def notify(card):
     url=os.environ['FEISHU_WEBHOOK']
     if not url.startswith('https://open.feishu.cn/open-apis/bot/v2/hook/'):
         raise ValueError('Invalid webhook host')
-    payload={'msg_type':'text','content':{'text':text}}
+    payload={'msg_type':'interactive','card':card}
     secret=os.environ.get('FEISHU_SIGN_SECRET')
     if secret:
         stamp=str(int(time.time()))

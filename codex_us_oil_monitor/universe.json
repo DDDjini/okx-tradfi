@@ -1,6 +1,5 @@
 {
-  "cutoff": "2026-11-10T00:00Z",
-  "selection": "全期 / 全部确认 / 合计 / rate >= 0.70",
+  "selection": "Preserve existing live16 + US-listed equities rate>=0.80 and decided>=10 from frozen OKX audit",
   "assets": [
     {
       "venue": "Alpaca SIP",
@@ -30,7 +29,13 @@
       "alpha_lo": 0.022681073509672346,
       "alpha_hi": 0.2541009091900143,
       "weeks": 39,
-      "control_times": 1461
+      "control_times": 1461,
+      "okx_backtest": {
+        "rate": 0.5,
+        "tp1": 6,
+        "decided": 12,
+        "cutoff": "2026-11-16T08:00Z"
+      }
     },
     {
       "venue": "Yahoo 60m",
@@ -60,7 +65,13 @@
       "alpha_lo": -0.13137024944684036,
       "alpha_hi": 0.08492832472629047,
       "weeks": 27,
-      "control_times": 816
+      "control_times": 816,
+      "okx_backtest": {
+        "rate": 0.625,
+        "tp1": 15,
+        "decided": 24,
+        "cutoff": "2026-11-16T08:00Z"
+      }
     },
     {
       "venue": "Yahoo 60m",
@@ -90,7 +101,13 @@
       "alpha_lo": -0.5476520102990691,
       "alpha_hi": 0.19256868050250409,
       "weeks": 9,
-      "control_times": 304
+      "control_times": 304,
+      "okx_backtest": {
+        "rate": 1.0,
+        "tp1": 19,
+        "decided": 19,
+        "cutoff": "2026-11-16T08:00Z"
+      }
     },
     {
       "venue": "Yahoo 60m",
@@ -120,7 +137,13 @@
       "alpha_lo": -0.17488720758573698,
       "alpha_hi": 0.09808820346320339,
       "weeks": 22,
-      "control_times": 709
+      "control_times": 709,
+      "okx_backtest": {
+        "rate": 0.5517241379310345,
+        "tp1": 16,
+        "decided": 29,
+        "cutoff": "2026-11-16T08:00Z"
+      }
     },
     {
       "venue": "Yahoo 60m",
@@ -150,7 +173,13 @@
       "alpha_lo": -0.07119585826802481,
       "alpha_hi": 0.17731227596527335,
       "weeks": 30,
-      "control_times": 1014
+      "control_times": 1014,
+      "okx_backtest": {
+        "rate": 0.55,
+        "tp1": 11,
+        "decided": 20,
+        "cutoff": "2026-11-16T08:00Z"
+      }
     },
     {
       "venue": "Yahoo 60m",
@@ -180,7 +209,13 @@
       "alpha_lo": -0.20348318158647077,
       "alpha_hi": 0.12098048630281082,
       "weeks": 34,
-      "control_times": 1024
+      "control_times": 1024,
+      "okx_backtest": {
+        "rate": 0.3684210526315789,
+        "tp1": 7,
+        "decided": 19,
+        "cutoff": "2026-11-16T08:00Z"
+      }
     },
     {
       "venue": "Yahoo 60m",
@@ -210,7 +245,13 @@
       "alpha_lo": -0.11281265372310541,
       "alpha_hi": 0.11535887033299345,
       "weeks": 26,
-      "control_times": 740
+      "control_times": 740,
+      "okx_backtest": {
+        "rate": 0.8,
+        "tp1": 16,
+        "decided": 20,
+        "cutoff": "2026-11-16T08:00Z"
+      }
     },
     {
       "venue": "Yahoo 60m",
@@ -239,7 +280,13 @@
       "excess": null,
       "alpha_lo": null,
       "alpha_hi": null,
-      "weeks": 0
+      "weeks": 0,
+      "okx_backtest": {
+        "rate": 1.0,
+        "tp1": 10,
+        "decided": 10,
+        "cutoff": "2026-11-16T08:00Z"
+      }
     },
     {
       "venue": "Yahoo 60m",
@@ -269,7 +316,13 @@
       "alpha_lo": null,
       "alpha_hi": null,
       "weeks": 2,
-      "control_times": 36
+      "control_times": 36,
+      "okx_backtest": {
+        "rate": 1.0,
+        "tp1": 9,
+        "decided": 9,
+        "cutoff": "2026-11-16T08:00Z"
+      }
     },
     {
       "venue": "Yahoo 60m",
@@ -299,7 +352,13 @@
       "alpha_lo": -0.009766245698804216,
       "alpha_hi": 0.2641299371165865,
       "weeks": 17,
-      "control_times": 495
+      "control_times": 495,
+      "okx_backtest": {
+        "rate": 0.8181818181818182,
+        "tp1": 9,
+        "decided": 11,
+        "cutoff": "2026-11-16T08:00Z"
+      }
     },
     {
       "venue": "Yahoo 60m",
@@ -329,7 +388,13 @@
       "alpha_lo": -0.27114938974879094,
       "alpha_hi": 0.09578562987365771,
       "weeks": 19,
-      "control_times": 790
+      "control_times": 790,
+      "okx_backtest": {
+        "rate": 0.7777777777777778,
+        "tp1": 7,
+        "decided": 9,
+        "cutoff": "2026-11-16T08:00Z"
+      }
     },
     {
       "venue": "Yahoo 60m",
@@ -359,7 +424,13 @@
       "alpha_lo": -0.1022366248327787,
       "alpha_hi": 0.13047386466926697,
       "weeks": 9,
-      "control_times": 262
+      "control_times": 262,
+      "okx_backtest": {
+        "rate": 0.7777777777777778,
+        "tp1": 14,
+        "decided": 18,
+        "cutoff": "2026-11-16T08:00Z"
+      }
     },
     {
       "venue": "Yahoo 60m",
@@ -389,7 +460,13 @@
       "alpha_lo": 0.03146233429460034,
       "alpha_hi": 0.34860583200436895,
       "weeks": 26,
-      "control_times": 953
+      "control_times": 953,
+      "okx_backtest": {
+        "rate": 0.6666666666666666,
+        "tp1": 6,
+        "decided": 9,
+        "cutoff": "2026-11-16T08:00Z"
+      }
     },
     {
       "venue": "Yahoo 60m",
@@ -419,7 +496,13 @@
       "alpha_lo": -0.21677300537290192,
       "alpha_hi": 0.09631217549199159,
       "weeks": 33,
-      "control_times": 1087
+      "control_times": 1087,
+      "okx_backtest": {
+        "rate": 0.5,
+        "tp1": 7,
+        "decided": 14,
+        "cutoff": "2026-11-16T08:00Z"
+      }
     },
     {
       "venue": "Alpaca SIP",
@@ -449,37 +532,13 @@
       "alpha_lo": -0.056791892563900576,
       "alpha_hi": 0.18371687831337824,
       "weeks": 55,
-      "control_times": 1773
-    },
-    {
-      "venue": "Yahoo 60m",
-      "group": "原油",
-      "symbol": "BNO",
-      "window": "全部",
-      "side": "合计",
-      "scope": "全部确认",
-      "n": 78,
-      "tp1": 56,
-      "sl": 16,
-      "closed": 72,
-      "ties": 0,
-      "open": 0,
-      "gap": 6,
-      "outside": 5,
-      "rate": 0.7777777777777778,
-      "low": 0.6690882726433144,
-      "high": 0.8583267607947987,
-      "optimistic": 0.7777777777777778,
-      "median_hours": 93.25,
-      "paired_n": 53,
-      "paired_tp": 43,
-      "paired_rate": 0.8113207547169812,
-      "control": 0.7809680251783112,
-      "excess": 0.030352729538669892,
-      "alpha_lo": -0.1270186362323459,
-      "alpha_hi": 0.17094544146489696,
-      "weeks": 25,
-      "control_times": 853
+      "control_times": 1773,
+      "okx_backtest": {
+        "rate": 1.0,
+        "tp1": 12,
+        "decided": 12,
+        "cutoff": "2026-11-16T08:00Z"
+      }
     },
     {
       "venue": "Yahoo 连续期货",
@@ -509,7 +568,183 @@
       "alpha_lo": -0.35885051448383215,
       "alpha_hi": 0.1268981516674648,
       "weeks": 13,
-      "control_times": 248
+      "control_times": 248,
+      "okx_backtest": {
+        "rate": 1.0,
+        "tp1": 19,
+        "decided": 19,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "GLW",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 1.0,
+        "tp1": 15,
+        "decided": 15,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "ADBE",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 1.0,
+        "tp1": 13,
+        "decided": 13,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "BB",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 1.0,
+        "tp1": 13,
+        "decided": 13,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "DKNG",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 1.0,
+        "tp1": 12,
+        "decided": 12,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "ORCL",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 1.0,
+        "tp1": 12,
+        "decided": 12,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "RKLB",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 1.0,
+        "tp1": 11,
+        "decided": 11,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "ASML",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 1.0,
+        "tp1": 10,
+        "decided": 10,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "BOT",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 1.0,
+        "tp1": 10,
+        "decided": 10,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "GEV",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 1.0,
+        "tp1": 10,
+        "decided": 10,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "HIMS",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 1.0,
+        "tp1": 10,
+        "decided": 10,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "TSEM",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 1.0,
+        "tp1": 10,
+        "decided": 10,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "TSM",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 0.9285714285714286,
+        "tp1": 13,
+        "decided": 14,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "CRWV",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 0.9166666666666666,
+        "tp1": 11,
+        "decided": 12,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "IBM",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 0.9166666666666666,
+        "tp1": 11,
+        "decided": 12,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "HOOD",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 0.9090909090909091,
+        "tp1": 10,
+        "decided": 11,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "CSCO",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 0.8823529411764706,
+        "tp1": 15,
+        "decided": 17,
+        "cutoff": "2026-11-16T08:00Z"
+      }
+    },
+    {
+      "symbol": "QCOM",
+      "selection_reason": "OKX TP1-first >=80% and decided>=10",
+      "okx_backtest": {
+        "rate": 0.8,
+        "tp1": 8,
+        "decided": 10,
+        "cutoff": "2026-11-16T08:00Z"
+      }
     }
   ]
 }
