@@ -33,7 +33,7 @@ def save(path, value):
 def run(send=False, only=None):
     now=datetime.now(timezone.utc)
     universe=json.loads((ROOT/'universe.json').read_text(encoding='utf-8'))['assets']
-    report={'asof':now.isoformat(),'provider':'OKX','signals':[],'health':[],'errors':[],'unsupported':[]}
+    report={'asof':now.isoformat(),'provider':'OKX','signals':[],'new_signals':[],'health':[],'errors':[],'unsupported':[]}
     state_file=ROOT/'state'/'notifications.json'
     state=json.loads(state_file.read_text(encoding='utf-8')) if state_file.exists() else {}
     try:
@@ -70,6 +70,8 @@ def run(send=False, only=None):
                 row={'key':key,'instrument':instrument,'ready':iso(signal.ready),'side':signal.side,
                      'low':signal.zone[0],'high':signal.zone[1],'mid':signal.mid,'sl':sl,'tp1':tp1,'tp2':tp2}
                 report['signals'].append(row)
+                if key not in state:
+                    report['new_signals'].append(row)
                 if send and key not in state:
                     notify(f"S-28 OKX {instrument} {'多' if signal.side>0 else '空'}\n确认 {iso(signal.ready)} UTC\n区间 {signal.zone[0]:.4f}–{signal.zone[1]:.4f}\nMID {signal.mid:.4f}\nSL {sl:.4f} · TP1 {tp1:.4f} · TP2 {tp2:.4f}\n{key}")
                     state[key]={'sent_at':now.isoformat()}
@@ -78,7 +80,7 @@ def run(send=False, only=None):
             report['errors'].append({'symbol':symbol,'error_type':type(exc).__name__,'reason':str(exc) if isinstance(exc,ValueError) else 'market or notification request failed'})
     save(ROOT/'scan_output.json',report)
     if send:
-        status='本轮没有信号触发' if not report['signals'] and not report['errors'] else '扫描存在异常' if report['errors'] else f"本轮信号 {len(report['signals'])} 条（已通知信号去重）"
+        status='本轮没有新信号触发' if not report['new_signals'] and not report['errors'] else '扫描存在异常' if report['errors'] else f"本轮新信号 {len(report['new_signals'])} 条（已通知信号去重）"
         notify(f"S-28 欧意扫描完成\n{status}\n正常标的 {len(report['health'])} · 异常 {len(report['errors'])}\n未上架 {', '.join(report['unsupported']) or '无'}\n时间 {now.astimezone(timezone(timedelta(hours=8))).isoformat()}"+('\n异常 '+json.dumps(report['errors'],ensure_ascii=False) if report['errors'] else ''))
     print(json.dumps({'healthy':len(report['health']),'signals':len(report['signals']),'errors':report['errors'],'unsupported':report['unsupported']},ensure_ascii=False))
     return int(bool(report['errors']))
