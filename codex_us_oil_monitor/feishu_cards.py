@@ -28,7 +28,7 @@ def signal_card(row,asset):
 def summary_card(report):
     errors=report['errors'];n=len(report['new_signals'])
     title='扫描异常 · 请检查' if errors else f'新增 {n} 条交易信号' if n else '本轮没有新信号触发'
-    elements=[md('**欧意美股与原油监控　｜　每 4 小时**'),
+    elements=[md('**欧意美股与原油监控　｜　每 2 小时**'),
       fields([('正常合约',str(len(report['health']))),('新增信号',str(n)),('扫描异常',str(len(errors))),('北京时间',cn_time(report['asof']))])]
     if report['unsupported']:elements.append(md('未上架 / 暂不可用：'+', '.join(report['unsupported'])))
     if errors:elements.append(md('\n'.join(f"• {e['symbol']}：{e.get('reason',e['error_type'])}" for e in errors)))

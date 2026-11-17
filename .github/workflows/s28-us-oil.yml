@@ -1,7 +1,7 @@
 name: US and oil S28 monitor
 on:
   schedule:
-    - cron: '17 */4 * * *'
+    - cron: '17 */2 * * *'
   workflow_dispatch:
 permissions:
   contents: write
