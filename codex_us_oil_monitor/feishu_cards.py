@@ -24,7 +24,7 @@ def signal_card(row,asset):
           fields([('MID 参考价',price(row['mid'])),('参考入场区间',f"{price(row['low'])} — {price(row['high'])}")]),
           {'tag':'hr'},fields([('🛑 止损 SL',price(row['sl'])),('🎯 第一目标 TP1',price(row['tp1'])),
                              ('第二目标 TP2',price(row['tp2'])),('单信号名义仓位上限','净值的 15%')]),
-          {'tag':'hr'},fields([('信号确认 · 北京时间',cn_time(row['ready'])),('历史 TP1 先触率',stat)])]
+          {'tag':'hr'},fields([('信号确认 · 北京时间',cn_time(row['ready'])),('动态 TP1 / TP2 先触率',stat)])]
     if outside:body.append(md('⚠️ **确认价已越过 TP1：该信号仅供观察，不应按已到达的目标追单。**'))
     body.append({'tag':'action','actions':[{'tag':'button','text':{'tag':'plain_text','content':'查看欧意合约 ↗'},'type':'primary',
                                         'url':'https://www.okx.com/trade-swap/'+row['instrument'].lower()}]})
