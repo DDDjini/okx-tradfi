@@ -13,6 +13,12 @@ def signal_card(row,asset):
     price=lambda v:f'{v:,.4f}'.rstrip('0').rstrip('.')
     evidence=asset.get('okx_backtest',{})
     stat=f"{evidence['rate']:.1%} · {evidence['tp1']}/{evidence['decided']} 次" if evidence.get('rate') is not None else '暂无欧意统计'
+    dynamic=asset.get('dynamic_stats',{})
+    if dynamic:
+        def rate(t):
+            v=dynamic[t]
+            return (f"{v['rate']:.1%} ({v['tp']}/{v['n']})" if v['rate'] is not None else '尚无已决样本')+f" · 未结束 {v['open']} · 顺序不明 {v['ambiguous']}"
+        stat='TP1 '+rate('tp1')+'\nTP2 '+rate('tp2')
     outside=row['side']*(row.get('reference',row['mid'])-row['tp1'])>=0
     body=[md(f"**{side}　｜　4H 确认 · UTC 日线结构**"),
           fields([('MID 参考价',price(row['mid'])),('参考入场区间',f"{price(row['low'])} — {price(row['high'])}")]),

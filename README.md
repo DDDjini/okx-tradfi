@@ -60,3 +60,12 @@ python codex_us_oil_monitor/scanner.py --send
 - 每次运行上传 `scan-report` artifact，包含扫描结果、错误和新增信号。
 
 旧项目根目录监控、core、notify、scripts和废弃工作流已清理；历史版本可通过Git提交记录追溯。
+
+
+## 动态 TP1 / TP2 跟踪
+
+每两小时扫描时独立比较TP1与原始SL、TP2与原始SL。先触TP1再止损，计TP1成功、TP2失败。每个信号的初始价位保存在 `state/outcomes.json`，后续不修改；已发送信号结局变化时推送一次结果卡，保存通知回执防止重复。只报告价格路径，不表示真实账户已获利。
+
+首次运行使用欧意历史日K与4H初始化两个目标的统计；旧信号不补发交易提醒，曾经发送过的信号会补发结局。卡片同时展示两个目标的先触率、成功/已决次数、未结束及顺序不明数量。4H同柱冲突使用1m复核；仍无法辨认时单列并保守计入失败。未结束不进分母。统计会随已决信号更新，并非固定不变的筛选胜率。
+
+state目录由Actions提交持久化。不得清空notifications.json或outcomes.json，否则可能重复通知。scan-report里的每个正常标的都包含dynamic_stats。GitHub Actions为定时检查，不是实时成交或止盈执行服务。

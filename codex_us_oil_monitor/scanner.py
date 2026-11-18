@@ -13,6 +13,7 @@ import pandas as pd
 import requests
 from engine import generate, iso
 from feishu_cards import signal_card, summary_card
+from outcomes import update
 COLS = ["open", "high", "low", "close", "volume"]
 
 ROOT = Path(__file__).resolve().parent
@@ -63,7 +64,10 @@ def run(send=False, only=None):
             if any(four.t[1:]!=four.end[:-1]) or any(daily.t[1:]!=daily.end[:-1]):
                 raise ValueError('Candle history contains gaps')
             report['health'].append({'symbol':symbol,'instrument':instrument,'daily_bars':len(daily),'four_hour_bars':len(four),'end':iso(four.end[-1])})
-            for signal in generate(instrument,daily,four,overlap=False,confirm_seconds=14400):
+            signals=generate(instrument,daily,four,overlap=False,confirm_seconds=14400)
+            asset["dynamic_stats"]=update(ROOT,instrument,signals,four,state,notify,save,send)
+            report["health"][-1]["dynamic_stats"]=asset["dynamic_stats"]
+            for signal in signals:
                 if signal.ready<now.timestamp()-48*3600:
                     continue
                 sl,tp1,tp2=signal.levels
@@ -97,7 +101,7 @@ def candles(instrument,bar,seconds,now):
     from engine import Bars
     rows={}
     after=None
-    for page in range(4):
+    for page in range(100 if bar=="4H" else 4):
         params={'instId':instrument,'bar':bar,'limit':100}
         if after:
             params['after']=after
