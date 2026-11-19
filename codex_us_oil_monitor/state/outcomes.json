@@ -5679,6 +5679,11 @@
           "result": "TP",
           "bar_start": 1794168000,
           "bar_end": 1794182400
+        },
+        "tp2": {
+          "result": "TP",
+          "bar_start": 1795089600,
+          "bar_end": 1795104000
         }
       },
       "announced": []
@@ -5694,6 +5699,11 @@
           "result": "TP",
           "bar_start": 1794168000,
           "bar_end": 1794182400
+        },
+        "tp2": {
+          "result": "TP",
+          "bar_start": 1795089600,
+          "bar_end": 1795104000
         }
       },
       "announced": []
@@ -5709,6 +5719,11 @@
           "result": "TP",
           "bar_start": 1794312000,
           "bar_end": 1794326400
+        },
+        "tp2": {
+          "result": "TP",
+          "bar_start": 1795089600,
+          "bar_end": 1795104000
         }
       },
       "announced": []
@@ -5724,6 +5739,11 @@
           "result": "TP",
           "bar_start": 1794312000,
           "bar_end": 1794326400
+        },
+        "tp2": {
+          "result": "TP",
+          "bar_start": 1795089600,
+          "bar_end": 1795104000
         }
       },
       "announced": []
@@ -6502,7 +6522,9 @@
           "bar_end": 1795075200
         }
       },
-      "announced": []
+      "announced": [
+        "tp1"
+      ]
     }
   },
   "RKLB-USDT-SWAP": {
