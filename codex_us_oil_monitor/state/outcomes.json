@@ -6059,8 +6059,16 @@
       "sl": 8.844418375,
       "tp1": 8.21191896,
       "tp2": 7.77307807375,
-      "results": {},
-      "announced": []
+      "results": {
+        "tp1": {
+          "result": "TP",
+          "bar_start": 1795176000,
+          "bar_end": 1795190400
+        }
+      },
+      "announced": [
+        "tp1"
+      ]
     }
   },
   "DKNG-USDT-SWAP": {
