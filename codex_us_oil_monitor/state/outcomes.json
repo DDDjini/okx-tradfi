@@ -2130,8 +2130,16 @@
       "sl": 636.2873627499999,
       "tp1": 590.78393136,
       "tp2": 559.2127303675,
-      "results": {},
-      "announced": []
+      "results": {
+        "tp1": {
+          "result": "TP",
+          "bar_start": 1795118400,
+          "bar_end": 1795132800
+        }
+      },
+      "announced": [
+        "tp1"
+      ]
     }
   },
   "AMZN-USDT-SWAP": {
@@ -5509,10 +5517,16 @@
           "result": "TP",
           "bar_start": 1794931200,
           "bar_end": 1794945600
+        },
+        "tp2": {
+          "result": "TP",
+          "bar_start": 1795118400,
+          "bar_end": 1795132800
         }
       },
       "announced": [
-        "tp1"
+        "tp1",
+        "tp2"
       ]
     }
   },
@@ -5768,6 +5782,11 @@
           "result": "TP",
           "bar_start": 1794312000,
           "bar_end": 1794326400
+        },
+        "tp2": {
+          "result": "TP",
+          "bar_start": 1795118400,
+          "bar_end": 1795132800
         }
       },
       "announced": []
@@ -6529,10 +6548,16 @@
           "result": "TP",
           "bar_start": 1795060800,
           "bar_end": 1795075200
+        },
+        "tp2": {
+          "result": "TP",
+          "bar_start": 1795118400,
+          "bar_end": 1795132800
         }
       },
       "announced": [
-        "tp1"
+        "tp1",
+        "tp2"
       ]
     }
   },
