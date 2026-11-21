@@ -2494,6 +2494,11 @@
           "result": "TP",
           "bar_start": 1794211200,
           "bar_end": 1794225600
+        },
+        "tp2": {
+          "result": "SL",
+          "bar_start": 1795204800,
+          "bar_end": 1795219200
         }
       },
       "announced": []
@@ -3719,10 +3724,16 @@
           "result": "TP",
           "bar_start": 1794916800,
           "bar_end": 1794931200
+        },
+        "tp2": {
+          "result": "TP",
+          "bar_start": 1795204800,
+          "bar_end": 1795219200
         }
       },
       "announced": [
-        "tp1"
+        "tp1",
+        "tp2"
       ]
     },
     "okx-v1/NFLX-USDT-SWAP/2026-11-15T00:00Z/S/1794859200": {
@@ -3736,10 +3747,16 @@
           "result": "TP",
           "bar_start": 1794931200,
           "bar_end": 1794945600
+        },
+        "tp2": {
+          "result": "TP",
+          "bar_start": 1795204800,
+          "bar_end": 1795219200
         }
       },
       "announced": [
-        "tp1"
+        "tp1",
+        "tp2"
       ]
     },
     "okx-v1/NFLX-USDT-SWAP/2026-11-16T00:00Z/S/1794859200": {
