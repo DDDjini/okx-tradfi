@@ -1728,8 +1728,22 @@
       "sl": 382.93242000000004,
       "tp1": 355.5474048,
       "tp2": 336.5471274,
-      "results": {},
-      "announced": []
+      "results": {
+        "tp1": {
+          "result": "SL",
+          "bar_start": 1795435200,
+          "bar_end": 1795449600
+        },
+        "tp2": {
+          "result": "SL",
+          "bar_start": 1795435200,
+          "bar_end": 1795449600
+        }
+      },
+      "announced": [
+        "tp1",
+        "tp2"
+      ]
     },
     "okx-v1/TSLA-USDT-SWAP/2026-11-22T00:00Z/S/1795363200": {
       "ready": 1795363200,
@@ -1737,8 +1751,22 @@
       "sl": 382.93242000000004,
       "tp1": 355.5474048,
       "tp2": 336.5471274,
-      "results": {},
-      "announced": []
+      "results": {
+        "tp1": {
+          "result": "SL",
+          "bar_start": 1795435200,
+          "bar_end": 1795449600
+        },
+        "tp2": {
+          "result": "SL",
+          "bar_start": 1795435200,
+          "bar_end": 1795449600
+        }
+      },
+      "announced": [
+        "tp1",
+        "tp2"
+      ]
     }
   },
   "META-USDT-SWAP": {
