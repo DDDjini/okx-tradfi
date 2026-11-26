@@ -2582,7 +2582,9 @@
           "bar_end": 1795622400
         }
       },
-      "announced": []
+      "announced": [
+        "tp1"
+      ]
     },
     "okx-v1/AMZN-USDT-SWAP/2026-11-25T00:00Z/S/1795608000": {
       "ready": 1795608000,
@@ -2597,7 +2599,9 @@
           "bar_end": 1795622400
         }
       },
-      "announced": []
+      "announced": [
+        "tp1"
+      ]
     }
   },
   "GOOGL-USDT-SWAP": {
@@ -9547,10 +9551,16 @@
           "result": "TP",
           "bar_start": 1795406400,
           "bar_end": 1795420800
+        },
+        "tp2": {
+          "result": "SL",
+          "bar_start": 1795636800,
+          "bar_end": 1795651200
         }
       },
       "announced": [
-        "tp1"
+        "tp1",
+        "tp2"
       ]
     },
     "okx-v1/QCOM-USDT-SWAP/2026-11-23T00:00Z/S/1795406400": {
@@ -9564,10 +9574,16 @@
           "result": "TP",
           "bar_start": 1795406400,
           "bar_end": 1795420800
+        },
+        "tp2": {
+          "result": "SL",
+          "bar_start": 1795636800,
+          "bar_end": 1795651200
         }
       },
       "announced": [
-        "tp1"
+        "tp1",
+        "tp2"
       ]
     }
   }
