@@ -275,6 +275,24 @@
       "tp2": 384.00680769,
       "results": {},
       "announced": []
+    },
+    "okx-v1/AAPL-USDT-SWAP/2026-11-25T00:00Z/L/1795752000": {
+      "ready": 1795752000,
+      "side": 1,
+      "sl": 343.024698,
+      "tp1": 370.49473312,
+      "tp2": 389.55399905999997,
+      "results": {},
+      "announced": []
+    },
+    "okx-v1/AAPL-USDT-SWAP/2026-11-26T00:00Z/L/1795752000": {
+      "ready": 1795752000,
+      "side": 1,
+      "sl": 343.571889,
+      "tp1": 371.08574416,
+      "tp2": 390.17541332999997,
+      "results": {},
+      "announced": []
     }
   },
   "NVDA-USDT-SWAP": {
@@ -6206,10 +6224,16 @@
           "result": "TP",
           "bar_start": 1795406400,
           "bar_end": 1795420800
+        },
+        "tp2": {
+          "result": "SL",
+          "bar_start": 1795737600,
+          "bar_end": 1795752000
         }
       },
       "announced": [
-        "tp1"
+        "tp1",
+        "tp2"
       ]
     },
     "okx-v1/BB-USDT-SWAP/2026-11-22T00:00Z/S/1795420800": {
@@ -6223,10 +6247,16 @@
           "result": "TP",
           "bar_start": 1795420800,
           "bar_end": 1795435200
+        },
+        "tp2": {
+          "result": "SL",
+          "bar_start": 1795737600,
+          "bar_end": 1795752000
         }
       },
       "announced": [
-        "tp1"
+        "tp1",
+        "tp2"
       ]
     }
   },
@@ -8773,6 +8803,15 @@
       "announced": [
         "tp1"
       ]
+    },
+    "okx-v1/IBM-USDT-SWAP/2026-11-27T00:00Z/L/1795752000": {
+      "ready": 1795752000,
+      "side": 1,
+      "sl": 234.30958126494426,
+      "tp1": 253.07351419405512,
+      "tp2": 266.09231035554495,
+      "results": {},
+      "announced": []
     }
   },
   "HOOD-USDT-SWAP": {
