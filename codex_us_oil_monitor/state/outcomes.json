@@ -2199,10 +2199,16 @@
           "result": "TP",
           "bar_start": 1795118400,
           "bar_end": 1795132800
+        },
+        "tp2": {
+          "result": "SL",
+          "bar_start": 1795766400,
+          "bar_end": 1795780800
         }
       },
       "announced": [
-        "tp1"
+        "tp1",
+        "tp2"
       ]
     }
   },
