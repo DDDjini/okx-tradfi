@@ -1801,8 +1801,16 @@
       "sl": 369.73596701038673,
       "tp1": 399.3450886220978,
       "tp2": 419.88849603247047,
-      "results": {},
-      "announced": []
+      "results": {
+        "tp1": {
+          "result": "TP",
+          "bar_start": 1795795200,
+          "bar_end": 1795809600
+        }
+      },
+      "announced": [
+        "tp1"
+      ]
     }
   },
   "META-USDT-SWAP": {
